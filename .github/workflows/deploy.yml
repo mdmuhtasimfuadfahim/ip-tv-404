@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         working-directory: frontend
@@ -37,6 +37,7 @@ jobs:
           VITE_BASE_URL: /ip-tv-404/
           # Optional: set your Cloudflare Worker URL here for CORS proxy
           # VITE_PROXY_URL: https://iptv-worldcup-proxy.YOUR_SUBDOMAIN.workers.dev
+          VITE_PROXY_URL: ${{ secrets.VITE_PROXY_URL }}
         run: npm run build
 
       - name: Upload artifact
