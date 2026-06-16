@@ -1,0 +1,16 @@
+{
+  "name": "ip-tv-404",
+  "version": "2.0.0",
+  "description": "FIFA World Cup 2026 live IPTV — 30+ sports channels, HLS player, EPG schedule",
+  "scripts": {
+    "install:all": "cd frontend && npm install && cd ../backend && npm install",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend":  "cd backend && npm run dev",
+    "build":        "cd frontend && VITE_BASE_URL=/ npm run build",
+    "build:gh":     "cd frontend && VITE_BASE_URL=/ip-tv-404/ npm run build",
+    "start":        "cd backend && npm start",
+    "docker:up":    "docker compose -f docker/docker-compose.yml up -d",
+    "docker:build": "docker compose -f docker/docker-compose.yml build",
+    "docker:logs":  "docker compose -f docker/docker-compose.yml logs -f"
+  }
+}

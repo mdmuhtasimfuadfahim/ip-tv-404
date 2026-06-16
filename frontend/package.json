@@ -1,0 +1,20 @@
+{
+  "name": "iptv-worldcup-frontend",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:gh": "VITE_BASE_URL=/ip-tv-404/ vite build"
+  },
+  "dependencies": {
+    "hls.js": "^1.5.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.3.1"
+  }
+}
