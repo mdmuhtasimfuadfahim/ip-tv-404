@@ -28,15 +28,31 @@ const HLS_CONFIG = {
   debug: false,
 };
 
+// Validate that the proxy URL is actually a usable proxy server
+// (not empty, not the same site, not a GitHub Pages URL used wrongly)
+function isValidProxy(url) {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    // Reject if it's the same as the app's origin (common misconfiguration)
+    if (u.hostname === location.hostname) return false;
+    // Must be http/https
+    return u.protocol === 'https:' || u.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
 /**
  * usePlayer(videoRef, streams, proxyUrl)
  *
  * streams: [{ url, needsProxy }, ...]  – ordered by preference
- * proxyUrl: optional – if set, proxied streams route through it
+ * proxyUrl: optional – Cloudflare Worker or backend proxy URL
  *
  * Returns: { state, error, currentStreamIndex, levels, currentLevel, setLevel, retry }
  */
 export function usePlayer(videoRef, streams, proxyUrl = '') {
+  const validProxy = isValidProxy(proxyUrl) ? proxyUrl : '';
   const hlsRef             = useRef(null);
   const retryTimerRef      = useRef(null);
   const streamIndexRef     = useRef(0);
@@ -49,11 +65,11 @@ export function usePlayer(videoRef, streams, proxyUrl = '') {
 
   const resolveUrl = useCallback((stream) => {
     if (!stream) return null;
-    if (stream.needsProxy && proxyUrl) {
-      return `${proxyUrl}?url=${encodeURIComponent(stream.url)}`;
+    if (stream.needsProxy && validProxy) {
+      return `${validProxy}?url=${encodeURIComponent(stream.url)}`;
     }
     return stream.url;
-  }, [proxyUrl]);
+  }, [validProxy]);
 
   const destroyHls = useCallback(() => {
     clearTimeout(retryTimerRef.current);

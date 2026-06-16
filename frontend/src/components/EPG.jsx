@@ -1,139 +1,231 @@
-import { useState, useMemo } from 'react';
-import { SCHEDULE, STAGE_GROUPS, stageColor } from '../data/schedule.js';
+import { useState, useMemo, useEffect } from 'react';
+import { SCHEDULE, TIMEZONES, STAGE_PRIORITY, stageColor, toTZ } from '../data/schedule.js';
 
-const FILTER_GROUPS = ['All', 'Groups', 'Knockouts'];
+// Detect user's best matching TZ slot
+function detectTZ() {
+  const offset = -new Date().getTimezoneOffset() / 60; // JS offset is inverted
+  const closest = TIMEZONES.reduce((best, tz) =>
+    Math.abs(tz.offset - offset) < Math.abs(best.offset - offset) ? tz : best
+  );
+  return closest.id;
+}
 
-function formatDate(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+function fmtDate(d) {
+  return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
 }
-function formatTime(iso) {
-  const d = new Date(iso);
-  return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+function fmtTime(d) {
+  return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 }
-function isPast(iso) { return new Date(iso) < new Date(); }
-function isToday(iso) {
-  const d = new Date(iso), now = new Date();
-  return d.toDateString() === now.toDateString();
+
+// Countdown helper
+function useCountdown(targetIso) {
+  const [diff, setDiff] = useState(0);
+  useEffect(() => {
+    const calc = () => setDiff(new Date(targetIso) - new Date());
+    calc();
+    const id = setInterval(calc, 1000);
+    return () => clearInterval(id);
+  }, [targetIso]);
+  if (diff <= 0) return null;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  if (h > 48) return null;
+  return h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
 }
+
+const STAGE_FILTERS = ['All', 'Today', 'Upcoming', 'Groups', 'Knockouts'];
 
 export default function EPG() {
-  const [filter, setFilter] = useState('All');
-  const [stageFilter, setStageFilter] = useState('');
-  const [search, setSearch] = useState('');
+  const [tzId,    setTzId]    = useState(detectTZ);
+  const [stage,   setStage]   = useState('All');
+  const [search,  setSearch]  = useState('');
+  const [showTzMenu, setShowTzMenu] = useState(false);
+
+  const tz = TIMEZONES.find(t => t.id === tzId) || TIMEZONES[0];
+
+  // Next match countdown
+  const nextMatch = useMemo(() =>
+    SCHEDULE.find(m => new Date(m.time) > new Date()),
+  []);
+  const countdown = useCountdown(nextMatch?.time);
 
   const filtered = useMemo(() => {
+    const now = new Date();
     return SCHEDULE.filter(m => {
-      if (search && !m.teams.toLowerCase().includes(search.toLowerCase()) &&
-          !m.venue.toLowerCase().includes(search.toLowerCase())) return false;
-      if (stageFilter && m.stage !== stageFilter) return false;
-      if (filter === 'Groups' && !m.stage.startsWith('Group')) return false;
-      if (filter === 'Knockouts' && m.stage.startsWith('Group')) return false;
+      const mt = new Date(m.time);
+      if (search) {
+        const q = search.toLowerCase();
+        if (!m.teams.toLowerCase().includes(q) && !m.venue.toLowerCase().includes(q) && !m.stage.toLowerCase().includes(q)) return false;
+      }
+      if (stage === 'Today') {
+        const d = toTZ(m.time, tz.offset);
+        const t = toTZ(new Date().toISOString(), tz.offset);
+        return d.toDateString() === t.toDateString();
+      }
+      if (stage === 'Upcoming') return mt > now;
+      if (stage === 'Groups')   return m.stage.startsWith('Group');
+      if (stage === 'Knockouts') return !m.stage.startsWith('Group');
       return true;
     });
-  }, [filter, stageFilter, search]);
+  }, [stage, search, tz]);
 
-  // Group by date
+  // Group by date in selected TZ
   const byDate = useMemo(() => {
     const map = new Map();
     for (const m of filtered) {
-      const key = formatDate(m.time);
+      const d = toTZ(m.time, tz.offset);
+      const key = fmtDate(d);
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(m);
     }
     return map;
-  }, [filtered]);
-
-  const upcoming = SCHEDULE.filter(m => !isPast(m.time)).slice(0, 1)[0];
+  }, [filtered, tz]);
 
   return (
     <div className="epg">
-      {/* Header */}
-      <div className="epg-header">
-        <div>
-          <h2 className="epg-title">⚽ FIFA World Cup 2026</h2>
-          <p className="epg-subtitle">June 11 – July 19 · USA, Canada, Mexico</p>
+      {/* ── Header ─────────────────────────────────────── */}
+      <div className="epg-top">
+        <div className="epg-top-left">
+          <div className="epg-headline">
+            <span className="epg-wc-badge">FIFA</span>
+            <h2>World Cup 2026</h2>
+            <span className="epg-host">🇺🇸🇨🇦🇲🇽</span>
+          </div>
+          <p className="epg-sub">June 11 – July 19 · 48 Teams · 104 Matches</p>
         </div>
-        {upcoming && (
-          <div className="epg-next">
-            <span className="epg-next-label">Next</span>
-            <span className="epg-next-match">{upcoming.teams}</span>
-            <span className="epg-next-time">{formatDate(upcoming.time)} · {formatTime(upcoming.time)}</span>
+
+        {/* Next match countdown */}
+        {nextMatch && countdown && (
+          <div className="epg-countdown">
+            <div className="epg-countdown-label">⏱ Next match</div>
+            <div className="epg-countdown-match">{nextMatch.teams.replace(/🏆\s*/,'')}</div>
+            <div className="epg-countdown-time">{countdown}</div>
           </div>
         )}
       </div>
 
-      {/* Filters */}
-      <div className="epg-filters">
-        <div className="epg-filter-row">
-          {FILTER_GROUPS.map(f => (
+      {/* ── Controls ───────────────────────────────────── */}
+      <div className="epg-controls">
+        {/* Stage filters */}
+        <div className="epg-filters">
+          {STAGE_FILTERS.map(f => (
             <button
               key={f}
-              className={`filter-btn${filter === f ? ' active' : ''}`}
-              onClick={() => { setFilter(f); setStageFilter(''); }}
-            >
-              {f}
-            </button>
+              className={`epg-filter-btn${stage === f ? ' active' : ''}`}
+              onClick={() => setStage(f)}
+            >{f}</button>
           ))}
         </div>
+
+        {/* Search */}
         <input
           className="epg-search"
           type="search"
-          placeholder="Search teams or venue…"
+          placeholder="🔍 Search teams, venue…"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+
+        {/* Timezone picker */}
+        <div className="tz-wrap">
+          <button className="tz-btn" onClick={() => setShowTzMenu(p => !p)}>
+            {tz.label} <span className="tz-offset">({tz.fmt})</span>
+            <span className="tz-caret">{showTzMenu ? '▲' : '▼'}</span>
+          </button>
+          {showTzMenu && (
+            <div className="tz-menu">
+              {TIMEZONES.map(t => (
+                <button
+                  key={t.id}
+                  className={`tz-option${tzId === t.id ? ' active' : ''}`}
+                  onClick={() => { setTzId(t.id); setShowTzMenu(false); }}
+                >
+                  <span>{t.label}</span>
+                  <span className="tz-opt-offset">{t.fmt}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Schedule */}
+      {/* ── Match list ─────────────────────────────────── */}
       <div className="epg-body">
         {byDate.size === 0 && (
-          <div className="epg-empty">No matches found</div>
+          <div className="epg-empty">No matches found for selected filter.</div>
         )}
-        {[...byDate.entries()].map(([date, matches]) => (
-          <div key={date} className="epg-day">
-            <div className="epg-day-header">
-              <span className="epg-day-label">{date}</span>
-              <span className="epg-day-count">{matches.length} match{matches.length !== 1 ? 'es' : ''}</span>
-            </div>
-            <div className="epg-matches">
-              {matches.map(m => {
-                const color = stageColor(m.stage);
-                const past  = isPast(m.time);
-                const today = isToday(m.time);
-                const final = m.stage === 'Final';
-                return (
-                  <div
-                    key={m.id}
-                    className={`epg-match${past ? ' past' : ''}${today ? ' today' : ''}${final ? ' final' : ''}`}
-                    style={{ '--stage-color': color }}
-                  >
-                    <div className="epg-match-left">
-                      <div className="epg-match-teams">{m.teams}</div>
-                      <div className="epg-match-info">
-                        <span className="epg-match-stage" style={{ color }}>
-                          {m.stage}
-                        </span>
-                        <span className="epg-match-venue">📍 {m.venue}</span>
+
+        {[...byDate.entries()].map(([dateStr, matches]) => {
+          const nowDate = toTZ(new Date().toISOString(), tz.offset);
+          const matchDate = new Date(matches[0].time);
+          const isToday = fmtDate(toTZ(new Date().toISOString(), tz.offset)) === dateStr;
+
+          return (
+            <section key={dateStr} className="epg-day-section">
+              <div className={`epg-day-header${isToday ? ' today' : ''}`}>
+                <span className="epg-day-label">
+                  {isToday ? '📅 Today — ' : ''}{dateStr}
+                </span>
+                <span className="epg-day-tz">{tz.fmt}</span>
+                <span className="epg-day-count">{matches.length} match{matches.length !== 1 ? 'es' : ''}</span>
+              </div>
+
+              <div className="epg-match-list">
+                {matches.map(m => {
+                  const localDate = toTZ(m.time, tz.offset);
+                  const isPast    = new Date(m.time) < new Date();
+                  const isFinal   = m.stage === 'Final';
+                  const color     = stageColor(m.stage);
+                  const isNow     = !isPast && countdown && m === nextMatch;
+
+                  return (
+                    <div
+                      key={m.id}
+                      className={[
+                        'epg-match',
+                        isPast  ? 'past'  : '',
+                        isToday ? 'today' : '',
+                        isFinal ? 'final' : '',
+                        isNow   ? 'next'  : '',
+                      ].filter(Boolean).join(' ')}
+                      style={{ '--sc': color }}
+                    >
+                      {/* Stage pill */}
+                      <div className="epg-match-stage" style={{ color }}>
+                        {m.stage}
                       </div>
-                      {m.channelHint && (
-                        <div className="epg-match-channels">
-                          📺 {m.channelHint}
-                        </div>
-                      )}
+
+                      {/* Teams */}
+                      <div className="epg-match-teams">{m.teams}</div>
+
+                      {/* Meta row */}
+                      <div className="epg-match-meta">
+                        <span className="epg-venue">📍 {m.venue}</span>
+                        {m.channels && (
+                          <span className="epg-channels">📺 {m.channels}</span>
+                        )}
+                      </div>
+
+                      {/* Time block */}
+                      <div className="epg-match-time-block">
+                        {isNow && countdown && (
+                          <span className="epg-live-soon">{countdown}</span>
+                        )}
+                        {isPast ? (
+                          <span className="epg-ft-badge">FT</span>
+                        ) : (
+                          <span className="epg-time">{fmtTime(localDate)}</span>
+                        )}
+                        <span className="epg-tz-label">{tz.fmt}</span>
+                      </div>
                     </div>
-                    <div className="epg-match-right">
-                      {today && !past && <span className="epg-today-badge">TODAY</span>}
-                      {past  && <span className="epg-past-badge">FT</span>}
-                      <div className="epg-match-time">{formatTime(m.time)}</div>
-                      <div className="epg-match-tz">UTC</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,406 +1,422 @@
 /**
- * Curated sports channel list.
+ * Sports Channel Registry — World Cup IPTV 2026
  *
- * Each channel:
- *   id        – unique slug
- *   name      – display name
- *   logo      – logo URL (null = show emoji fallback)
- *   category  – Football | Cricket | Multi-Sport | Motorsport | Regional
- *   country   – 2-letter country code
- *   streams   – ordered list of stream URLs. Player tries [0] first, falls
- *               back to [1], etc.  Mark needsProxy:true for CORS-blocked streams
- *               (they'll route through your proxy when configured).
+ * Stream tiers:
+ *  🟢 STABLE  – public CDN, no token, CORS-open (akamai, amagi, gpcdn, frequency, xumo)
+ *  🟡 PROXY   – works only when a CORS proxy is configured (VITE_PROXY_URL)
+ *  🔴 BROKEN  – removed
  *
- * STREAM RELIABILITY TIERS:
- *   🟢 Stable  – public CDN, no tokens, CORS-open (akamai, amagi, frequency, xumo)
- *   🟡 Good    – stable server but may need proxy for CORS
- *   🔴 Token   – aynaott.com streams with expiring tokens; backend auto-refreshes
+ * needsProxy: true → requires CORS proxy to load in-browser
+ *
+ * Sources: iptv-org/iptv (verified), official CDNs, FAST channels
  */
 
 export const CHANNELS = [
-  // ─── PTV Sports ────────────────────────────────────────────────
-  {
-    id:       'ptv-sports',
-    name:     'PTV Sports',
-    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/c/c1/PTV_Sports_Logo.png/150px-PTV_Sports_Logo.png',
-    category: 'Cricket',
-    country:  'PK',
-    streams: [
-      { url: 'https://livestream.ptv.com.pk/ptvsports/ptvsports.m3u8', needsProxy: true },
-      { url: 'https://tvsen5.aynaott.com/PtvSports/index.m3u8', needsProxy: false },
-    ],
-  },
 
-  // ─── T Sports (Bangladesh) ──────────────────────────────────────
+  // ══════════════════════════════════════════════════════
+  // 🇧🇩  BANGLADESH
+  // ══════════════════════════════════════════════════════
+
   {
     id:       't-sports',
     name:     'T Sports HD',
-    logo:     'https://s3.aynaott.com/storage/dbc585f70a60b9855b6e13a8ce4cb6f4',
-    category: 'Cricket',
+    logo:     'https://i.imgur.com/2JzlorD.png',
+    category: 'Bangladesh',
     country:  'BD',
+    tags:     ['cricket','football','wc2026'],
     streams: [
-      { url: 'https://tvsen7.aynaott.com/tsports-hd/index.m3u8', needsProxy: false },
-      { url: 'http://198.195.239.50:8095/Tsports/index.m3u8',     needsProxy: true  },
+      // iptv-org verified CDN (no token)
+      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8', needsProxy: false },
+      { url: 'https://tvsen7.aynaott.com/tsports-hd/index.m3u8',           needsProxy: false },
     ],
   },
 
-  // ─── A Sports (Pakistan) ────────────────────────────────────────
+  {
+    id:       'gazi-tv',
+    name:     'Gazi TV',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/GTV_Logo.png/200px-GTV_Logo.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['cricket','football'],
+    streams: [
+      { url: 'https://bozztv.com/rongo/rongo-gazitv/index.m3u8',           needsProxy: false },
+      { url: 'http://tvn1.chowdhury-shaheb.com/gazitv/index.m3u8',         needsProxy: true  },
+    ],
+  },
+
+  {
+    id:       'btv-national',
+    name:     'BTV National',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/d/d1/Bangladesh_Television_logo.svg/200px-Bangladesh_Television_logo.svg.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['national','wc2026'],
+    streams: [
+      { url: 'https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/355ba051-9a60-48aa-adcf-5a6c64da8c5c/355ba051-9a60-48aa-adcf-5a6c64da8c5c_3_playlist.m3u8', needsProxy: false },
+      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'btv-world',
+    name:     'BTV World',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/d/d1/Bangladesh_Television_logo.svg/200px-Bangladesh_Television_logo.svg.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['national'],
+    streams: [
+      { url: 'https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/d96eb7f4-83c2-4472-9597-3568390a8ebf/d96eb7f4-83c2-4472-9597-3568390a8ebf_3_playlist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'maasranga-tv',
+    name:     'Maasranga TV',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Maasranga_Television_logo.png/200px-Maasranga_Television_logo.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['entertainment','cricket'],
+    streams: [
+      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1722/output/index.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'channel-i',
+    name:     'Channel i',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Channel_i_BD_logo.png/200px-Channel_i_BD_logo.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['entertainment'],
+    streams: [
+      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1723/output/index.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'somoy-tv',
+    name:     'Somoy TV',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/c/c4/Somoy_Television_logo.svg/200px-Somoy_Television_logo.svg.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['news','sports'],
+    streams: [
+      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8', needsProxy: false },
+      { url: 'https://bozztv.com/rongo/rongo-somoy/index.m3u8',             needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'boishakhi-tv',
+    name:     'Boishakhi TV',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/7/7f/Boishakhi_Television_Logo.png/200px-Boishakhi_Television_Logo.png',
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['entertainment'],
+    streams: [
+      { url: 'https://boishakhi.sonarbanglatv.com/boishakhi/boishakhitv/index.m3u8', needsProxy: false },
+      { url: 'https://bozztv.com/rongo/rongo-boishakhi/index.m3u8',                  needsProxy: false },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════
+  // 🇵🇰  PAKISTAN
+  // ══════════════════════════════════════════════════════
+
+  {
+    id:       'ptv-sports',
+    name:     'PTV Sports',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/c/c1/PTV_Sports_Logo.png/200px-PTV_Sports_Logo.png',
+    category: 'Pakistan',
+    country:  'PK',
+    tags:     ['cricket','wc2026'],
+    streams: [
+      { url: 'https://livestream.ptv.com.pk/ptvsports/ptvsports.m3u8', needsProxy: true  },
+      { url: 'http://103.250.28.74:8000/play/a019/index.m3u8',         needsProxy: true  },
+    ],
+  },
+
+  {
+    id:       'ten-sports-pk',
+    name:     'Ten Sports Pakistan',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Ten_Sports_2018.png/200px-Ten_Sports_2018.png',
+    category: 'Pakistan',
+    country:  'PK',
+    tags:     ['cricket','football','wc2026'],
+    streams: [
+      { url: 'http://121.91.61.106:8000/play/a04h/index.m3u8', needsProxy: true },
+    ],
+  },
+
   {
     id:       'a-sports',
     name:     'A Sports',
-    logo:     'https://s3.aynaott.com/storage/64de30d2df9b2a888cb73f17614a9a8b',
-    category: 'Multi-Sport',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/3/3c/A_Sports_Pakistan_Logo.png/200px-A_Sports_Pakistan_Logo.png',
+    category: 'Pakistan',
     country:  'PK',
+    tags:     ['cricket','football','wc2026'],
     streams: [
       { url: 'https://tvsen6.aynaott.com/asports/index.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Cricket Gold ───────────────────────────────────────────────
-  {
-    id:       'cricket-gold',
-    name:     'Cricket Gold',
-    logo:     'https://s3.aynaott.com/storage/7d20b575edc4e4b5276faa8c246e72a4',
-    category: 'Cricket',
-    country:  'IN',
-    streams: [
-      { url: 'https://tvsen6.aynaott.com/CricketGold/index.m3u8', needsProxy: false },
-    ],
-  },
+  // ══════════════════════════════════════════════════════
+  // 🇮🇳  INDIA
+  // ══════════════════════════════════════════════════════
 
-  // ─── ESPN ───────────────────────────────────────────────────────
-  {
-    id:       'espn',
-    name:     'ESPN',
-    logo:     'https://s3.aynaott.com/storage/b46df1959322aa48d270a6b163234c76',
-    category: 'Multi-Sport',
-    country:  'US',
-    streams: [
-      { url: 'https://tvsen5.aynaott.com/espn/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── NBC Sports 🟢 ─────────────────────────────────────────────
-  {
-    id:       'nbc-sports',
-    name:     'NBC Sports',
-    logo:     'https://s3.aynaott.com/storage/0a241a80bf51d2c3b3722531706ce086',
-    category: 'Multi-Sport',
-    country:  'US',
-    streams: [
-      { url: 'https://xumo-xumoent-vc-122-sjv70.fast.nbcuni.com/live/master.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── Fox Sports 2 ──────────────────────────────────────────────
-  {
-    id:       'fox-sports-2',
-    name:     'Fox Sports 2',
-    logo:     'https://s3.aynaott.com/storage/da4282cd107cc3d40efadae488b187e5',
-    category: 'Multi-Sport',
-    country:  'US',
-    streams: [
-      { url: 'https://tvsen7.aynaott.com/foxsports2/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── beIN TV 🟢 (Amagi CDN) ─────────────────────────────────────
-  {
-    id:       'bein-tv',
-    name:     'beIN Sports',
-    logo:     'https://static.epg.best/qa/beINSports1.qa.png',
-    category: 'Football',
-    country:  'QA',
-    streams: [
-      { url: 'https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── TSN 1 ──────────────────────────────────────────────────────
-  {
-    id:       'tsn-1',
-    name:     'TSN 1',
-    logo:     'https://s3.aynaott.com/storage/59fe7ff434fed04ecec29b4d737ebc95',
-    category: 'Multi-Sport',
-    country:  'CA',
-    streams: [
-      { url: 'https://tvsen7.aynaott.com/tsn1/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── TSN 2 ──────────────────────────────────────────────────────
-  {
-    id:       'tsn-2',
-    name:     'TSN 2',
-    logo:     'https://s3.aynaott.com/storage/17642cb60c2af7fc36ca1e08cc54fdae',
-    category: 'Multi-Sport',
-    country:  'CA',
-    streams: [
-      { url: 'https://tvsen7.aynaott.com/tsn2/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── TSN 3 ──────────────────────────────────────────────────────
-  {
-    id:       'tsn-3',
-    name:     'TSN 3',
-    logo:     'https://s3.aynaott.com/storage/1cb10107a47db353e35ad78d3160eda7',
-    category: 'Multi-Sport',
-    country:  'CA',
-    streams: [
-      { url: 'https://tvsen7.aynaott.com/tsn3/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── Golf Channel ───────────────────────────────────────────────
-  {
-    id:       'golf-channel',
-    name:     'Golf Channel',
-    logo:     'https://s3.aynaott.com/storage/edb73991516696dfd53efbd32d80ca58',
-    category: 'Multi-Sport',
-    country:  'US',
-    streams: [
-      { url: 'https://tvsen6.aynaott.com/golfchannel/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── NFL Network ────────────────────────────────────────────────
-  {
-    id:       'nfl-network',
-    name:     'NFL Network',
-    logo:     'https://s3.aynaott.com/storage/79f1ee920d6931a767ae0030e1c7c12b',
-    category: 'Multi-Sport',
-    country:  'US',
-    streams: [
-      { url: 'https://tvsen6.aynaott.com/nfl/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── Willow HD ──────────────────────────────────────────────────
-  {
-    id:       'willow-hd',
-    name:     'Willow HD',
-    logo:     'https://s3.aynaott.com/storage/94a778ec3219f7eb54bdf1ee07a95788',
-    category: 'Cricket',
-    country:  'US',
-    streams: [
-      { url: 'https://tvsen5.aynaott.com/willowhd/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── DD Sports 🟢 ───────────────────────────────────────────────
   {
     id:       'dd-sports',
     name:     'DD Sports',
-    logo:     'https://s3.aynaott.com/storage/188500190395c4de0e506d518925dcc4',
-    category: 'Cricket',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/DD_Sports_logo.png/200px-DD_Sports_logo.png',
+    category: 'India',
     country:  'IN',
+    tags:     ['cricket','wc2026'],
     streams: [
       { url: 'https://cdn-6.pishow.tv/live/13/master.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Star Sports 2 ──────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════
+  // ⚽  FOOTBALL / GLOBAL
+  // ══════════════════════════════════════════════════════
+
   {
-    id:       'star-sports-2',
-    name:     'Star Sports 2',
-    logo:     null,
-    category: 'Cricket',
-    country:  'IN',
+    id:       'bein-sports',
+    name:     'beIN Sports',
+    logo:     'https://static.epg.best/qa/beINSports1.qa.png',
+    category: 'Football',
+    country:  'QA',
+    tags:     ['football','wc2026'],
     streams: [
-      { url: 'http://198.195.239.50:8095/StarSports2/index.m3u8', needsProxy: true },
+      // 🟢 Amagi FAST CDN — stable, no token
+      { url: 'https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Sony Sports 2 ──────────────────────────────────────────────
-  {
-    id:       'sony-sports-2',
-    name:     'Sony Sports 2',
-    logo:     null,
-    category: 'Cricket',
-    country:  'IN',
-    streams: [
-      { url: 'http://198.195.239.50:8095/SonyTenSports2/index.m3u8', needsProxy: true },
-    ],
-  },
-
-  // ─── Eurosport HD ───────────────────────────────────────────────
-  {
-    id:       'eurosport',
-    name:     'Eurosport HD',
-    logo:     null,
-    category: 'Multi-Sport',
-    country:  'EU',
-    streams: [
-      { url: 'http://198.195.239.50:8095/Eurosport/index.m3u8', needsProxy: true },
-    ],
-  },
-
-  // ─── Real Madrid TV 🟢 (Akamai) ─────────────────────────────────
   {
     id:       'real-madrid-tv',
     name:     'Real Madrid TV',
-    logo:     'https://pbs.twimg.com/profile_images/896773300667461633/F75hrQfN_400x400.jpg',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/200px-Real_Madrid_CF.svg.png',
     category: 'Football',
     country:  'ES',
+    tags:     ['football'],
     streams: [
+      // 🟢 Akamai official CDN
       { url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── KTV Sport Plus 🟢 ──────────────────────────────────────────
-  {
-    id:       'ktv-sport',
-    name:     'KTV Sport Plus',
-    logo:     'https://s3.aynaott.com/storage/b54495ee3cdd53ddaa19d1f98120f488',
-    category: 'Multi-Sport',
-    country:  'KW',
-    streams: [
-      { url: 'https://kwtsplta.cdn.mangomolo.com/spl/smil:spl.stream.smil/chunklist.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── Oman Sports TV 🟢 ──────────────────────────────────────────
-  {
-    id:       'oman-sports',
-    name:     'Oman Sports TV',
-    logo:     'https://s3.aynaott.com/storage/33f87783637fc95fdb8837ba9344c9e9',
-    category: 'Multi-Sport',
-    country:  'OM',
-    streams: [
-      { url: 'https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── Bahrain Sports 1 🟢 ────────────────────────────────────────
-  {
-    id:       'bahrain-sports',
-    name:     'Bahrain Sports 1',
-    logo:     'https://s3.aynaott.com/storage/f55bea3263be1af187fe1122e4f44142',
-    category: 'Multi-Sport',
-    country:  'BH',
-    streams: [
-      { url: 'https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── Bleav Football 🟢 ──────────────────────────────────────────
   {
     id:       'bleav-football',
     name:     'Bleav Football',
-    logo:     'https://s3.aynaott.com/storage/030ec528e912afb9a2ec3b4c5167a928',
+    logo:     'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/1px-PNG_transparency_demonstration_1.png',
     category: 'Football',
     country:  'US',
+    tags:     ['football'],
     streams: [
+      // 🟢 Frequency FAST CDN
       { url: 'https://linear-493.frequency.stream/dist/glewedtv/493/hls/master/playlist.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Speed Sports 🟢 ────────────────────────────────────────────
   {
-    id:       'speed-sports',
-    name:     'Speed Sports 1',
-    logo:     'https://s3.aynaott.com/storage/06f5b193bfa4d31310ee934eb3c2222e',
-    category: 'Motorsport',
-    country:  'US',
+    id:       'sport5-il',
+    name:     'Sport 5 Israel',
+    logo:     null,
+    category: 'Football',
+    country:  'IL',
+    tags:     ['football','multi'],
     streams: [
-      { url: 'https://linear-599.frequency.stream/dist/stirr/599/hls/master/playlist.m3u8', needsProxy: false },
+      // 🟢 Akamai CDN
+      { url: 'https://rgelive.akamaized.net/hls/live/2043095/live3/playlist.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── World of Free Sports 🟢 ────────────────────────────────────
+  // ══════════════════════════════════════════════════════
+  // 🏏  CRICKET
+  // ══════════════════════════════════════════════════════
+
+  {
+    id:       'willow-tv',
+    name:     'Willow TV',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/c/c7/Willow_TV_Logo.png/200px-Willow_TV_Logo.png',
+    category: 'Cricket',
+    country:  'US',
+    tags:     ['cricket'],
+    streams: [
+      { url: 'https://tvsen5.aynaott.com/willowhd/index.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'cricket-gold',
+    name:     'Cricket Gold',
+    logo:     null,
+    category: 'Cricket',
+    country:  'IN',
+    tags:     ['cricket'],
+    streams: [
+      { url: 'https://tvsen6.aynaott.com/CricketGold/index.m3u8', needsProxy: false },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════
+  // 📡  MULTI-SPORT — STABLE FAST CHANNELS
+  // ══════════════════════════════════════════════════════
+
+  {
+    id:       'nbc-sports',
+    name:     'NBC Sports',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/NBCSports.svg/200px-NBCSports.svg.png',
+    category: 'Multi-Sport',
+    country:  'US',
+    tags:     ['multi','wc2026'],
+    streams: [
+      // 🟢 Xumo/NBC CDN
+      { url: 'https://xumo-xumoent-vc-122-sjv70.fast.nbcuni.com/live/master.m3u8', needsProxy: false },
+    ],
+  },
+
   {
     id:       'world-free-sports',
     name:     'World of Free Sports',
-    logo:     'https://s3.aynaott.com/storage/1a580ee2636a0c4761e623bc131ba7a6',
+    logo:     null,
     category: 'Multi-Sport',
     country:  'US',
+    tags:     ['multi'],
     streams: [
+      // 🟢 Amagi FAST CDN
       { url: 'https://mainstreammedia-worldoffreesportsintl-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-mainstreammediafreesportsintl-rakuten/CDN/master.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Sports First TV 🟢 ─────────────────────────────────────────
   {
-    id:       'sports-first',
-    name:     'Sports First TV',
-    logo:     'https://s3.aynaott.com/storage/748d28752dcf95740561f1ac39e15fc3',
-    category: 'Multi-Sport',
+    id:       'speed-sports',
+    name:     'Speed Sports',
+    logo:     null,
+    category: 'Motorsport',
     country:  'US',
+    tags:     ['motorsport'],
     streams: [
-      { url: 'https://d4ddgdmj1cvnm.cloudfront.net/scheduler/scheduleMaster/409.m3u8', needsProxy: false },
+      // 🟢 Frequency/Stirr FAST CDN
+      { url: 'https://linear-599.frequency.stream/dist/stirr/599/hls/master/playlist.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── More Than Sports 🟢 ────────────────────────────────────────
   {
     id:       'more-than-sports',
     name:     'More Than Sports TV',
-    logo:     'https://s3.aynaott.com/storage/39174e32d4f8d29a95c881637fe1ecdb',
+    logo:     null,
     category: 'Multi-Sport',
     country:  'DE',
+    tags:     ['multi'],
     streams: [
+      // 🟢 iptv-playoutcenter stable
       { url: 'https://mts1.iptv-playoutcenter.de/mts/mts-web/playlist.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Sports Grid ─────────────────────────────────────────────────
+  {
+    id:       'sports-first',
+    name:     'Sports First TV',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'US',
+    tags:     ['multi'],
+    streams: [
+      // 🟢 CloudFront CDN
+      { url: 'https://d4ddgdmj1cvnm.cloudfront.net/scheduler/scheduleMaster/409.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'ktv-sport',
+    name:     'KTV Sport Plus',
+    logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/c/c9/KTV_Kuwait.png/200px-KTV_Kuwait.png',
+    category: 'Multi-Sport',
+    country:  'KW',
+    tags:     ['multi'],
+    streams: [
+      // 🟢 Mangomolo CDN
+      { url: 'https://kwtsplta.cdn.mangomolo.com/spl/smil:spl.stream.smil/chunklist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'oman-sports',
+    name:     'Oman Sports TV',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'OM',
+    tags:     ['multi'],
+    streams: [
+      // 🟢 Mgmlcdn CDN
+      { url: 'https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'bahrain-sports',
+    name:     'Bahrain Sports 1',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'BH',
+    tags:     ['multi'],
+    streams: [
+      // 🟢 StreamLock CDN
+      { url: 'https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       '2tv-sport',
+    name:     '2TV Sport (Georgia)',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'GE',
+    tags:     ['multi'],
+    streams: [
+      // 🟢 GPB CDN
+      { url: 'https://tv.cdn.xsg.ge/gpb-2tv/index.m3u8', needsProxy: false },
+    ],
+  },
+
   {
     id:       'sports-grid',
     name:     'Sports Grid',
-    logo:     'https://s3.aynaott.com/storage/1aa37e387ed56a1260b285558eec7c46',
+    logo:     null,
     category: 'Multi-Sport',
     country:  'US',
+    tags:     ['multi','analysis'],
     streams: [
       { url: 'https://tvsen6.aynaott.com/SportsGrid/index.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Marquee Sports Network ──────────────────────────────────────
   {
     id:       'marquee-sports',
     name:     'Marquee Sports Network',
-    logo:     'https://s3.aynaott.com/storage/66bdaa21aba96de6d32a3515715f7502',
+    logo:     null,
     category: 'Multi-Sport',
     country:  'US',
+    tags:     ['baseball','multi'],
     streams: [
       { url: 'https://tvsen6.aynaott.com/MarqueeSportsNetwork/index.m3u8', needsProxy: false },
     ],
   },
 
-  // ─── Sport5 Israel 🟢 ───────────────────────────────────────────
-  {
-    id:       'sport5',
-    name:     'Sport 5',
-    logo:     null,
-    category: 'Football',
-    country:  'IL',
-    streams: [
-      { url: 'https://rgelive.akamaized.net/hls/live/2043095/live3/playlist.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ─── 2TV Sport Georgia 🟢 ───────────────────────────────────────
-  {
-    id:       '2tv-sport',
-    name:     '2TV Sport',
-    logo:     null,
-    category: 'Multi-Sport',
-    country:  'GE',
-    streams: [
-      { url: 'https://tv.cdn.xsg.ge/gpb-2tv/index.m3u8', needsProxy: false },
-    ],
-  },
 ];
 
-// Category list for filter tabs
+// ── Category tabs ────────────────────────────────────────────────
 export const CATEGORIES = [
-  'All',
-  'Football',
-  'Cricket',
-  'Multi-Sport',
-  'Motorsport',
-  'Regional',
+  { id: 'All',        label: '🌐 All',         emoji: '🌐' },
+  { id: 'Bangladesh', label: '🇧🇩 Bangladesh', emoji: '🇧🇩' },
+  { id: 'Pakistan',   label: '🇵🇰 Pakistan',   emoji: '🇵🇰' },
+  { id: 'India',      label: '🇮🇳 India',       emoji: '🇮🇳' },
+  { id: 'Football',   label: '⚽ Football',     emoji: '⚽' },
+  { id: 'Cricket',    label: '🏏 Cricket',      emoji: '🏏' },
+  { id: 'Multi-Sport',label: '📡 Multi-Sport',  emoji: '📡' },
+  { id: 'Motorsport', label: '🏎️ Motorsport',   emoji: '🏎️' },
 ];
 
 // Country flag emoji helper
