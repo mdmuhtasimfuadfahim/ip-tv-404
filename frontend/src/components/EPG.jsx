@@ -10,12 +10,9 @@ function detectTZ() {
   return closest.id;
 }
 
-function fmtDate(d) {
-  return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-}
-function fmtTime(d) {
-  return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-}
+// toTZ() returns {date:'Mon, Jun 17', time:'7:00 PM', ts, ...} — not a Date object.
+function fmtDate(tzObj) { return tzObj.date; }
+function fmtTime(tzObj) { return tzObj.time; }
 
 // Countdown helper
 function useCountdown(targetIso) {
@@ -61,7 +58,7 @@ export default function EPG() {
       if (stage === 'Today') {
         const d = toTZ(m.time, tz.offset);
         const t = toTZ(new Date().toISOString(), tz.offset);
-        return d.toDateString() === t.toDateString();
+        return d.date === t.date;
       }
       if (stage === 'Upcoming') return mt > now;
       if (stage === 'Groups')   return m.stage.startsWith('Group');

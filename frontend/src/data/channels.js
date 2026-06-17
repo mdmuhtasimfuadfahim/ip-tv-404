@@ -51,8 +51,8 @@ export const CHANNELS = [
     country:  'BD',
     tags:     ['national','wc2026'],
     streams: [
+      // Official BTV National live stream only — gpcdn ID 1709 is T Sports, NOT BTV
       { url: 'https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/355ba051-9a60-48aa-adcf-5a6c64da8c5c/355ba051-9a60-48aa-adcf-5a6c64da8c5c_3_playlist.m3u8', needsProxy: false },
-      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', needsProxy: false },
     ],
   },
 

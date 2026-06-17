@@ -170,19 +170,19 @@ export const SCHEDULE = [
 
 // ── Timezone definitions ─────────────────────────────────────────────────
 export const TIMEZONES = [
-  { id:'UTC',  label:'UTC / GMT',              offset:0,    region:'🌐' },
-  { id:'BD',   label:'Bangladesh (BDT)',        offset:6,    region:'🇧🇩' },
-  { id:'IN',   label:'India (IST)',             offset:5.5,  region:'🇮🇳' },
-  { id:'PK',   label:'Pakistan (PKT)',          offset:5,    region:'🇵🇰' },
-  { id:'UAE',  label:'UAE / Dubai (GST)',       offset:4,    region:'🇦🇪' },
-  { id:'SA',   label:'Saudi Arabia (AST)',      offset:3,    region:'🇸🇦' },
-  { id:'UK',   label:'UK (BST)',                offset:1,    region:'🇬🇧' },
-  { id:'DE',   label:'Germany (CEST)',          offset:2,    region:'🇩🇪' },
-  { id:'US_E', label:'USA Eastern (EDT)',       offset:-4,   region:'🇺🇸' },
-  { id:'US_C', label:'USA Central (CDT)',       offset:-5,   region:'🇺🇸' },
-  { id:'US_P', label:'USA Pacific (PDT)',       offset:-7,   region:'🇺🇸' },
-  { id:'JP',   label:'Japan (JST)',             offset:9,    region:'🇯🇵' },
-  { id:'AU',   label:'Australia/Sydney (AEST)', offset:10,   region:'🇦🇺' },
+  { id:'UTC',  label:'UTC / GMT',              offset:0,    region:'🌐', fmt:'UTC'       },
+  { id:'BD',   label:'Bangladesh (BDT)',        offset:6,    region:'🇧🇩', fmt:'BDT +6'   },
+  { id:'IN',   label:'India (IST)',             offset:5.5,  region:'🇮🇳', fmt:'IST +5:30'},
+  { id:'PK',   label:'Pakistan (PKT)',          offset:5,    region:'🇵🇰', fmt:'PKT +5'   },
+  { id:'UAE',  label:'UAE / Dubai (GST)',       offset:4,    region:'🇦🇪', fmt:'GST +4'   },
+  { id:'SA',   label:'Saudi Arabia (AST)',      offset:3,    region:'🇸🇦', fmt:'AST +3'   },
+  { id:'UK',   label:'UK (BST)',                offset:1,    region:'🇬🇧', fmt:'BST +1'   },
+  { id:'DE',   label:'Germany (CEST)',          offset:2,    region:'🇩🇪', fmt:'CEST +2'  },
+  { id:'US_E', label:'USA Eastern (EDT)',       offset:-4,   region:'🇺🇸', fmt:'EDT -4'   },
+  { id:'US_C', label:'USA Central (CDT)',       offset:-5,   region:'🇺🇸', fmt:'CDT -5'   },
+  { id:'US_P', label:'USA Pacific (PDT)',       offset:-7,   region:'🇺🇸', fmt:'PDT -7'   },
+  { id:'JP',   label:'Japan (JST)',             offset:9,    region:'🇯🇵', fmt:'JST +9'   },
+  { id:'AU',   label:'Australia/Sydney (AEST)', offset:10,   region:'🇦🇺', fmt:'AEST +10' },
 ];
 
 /**
@@ -230,3 +230,11 @@ export function detectTZ() {
   }
   return best;
 }
+
+// ── EPG compatibility aliases ──────────────────────────────────────────────
+// EPG.jsx uses m.time (ISO string) and m.teams (combined display string).
+// Add these as derived fields so the component works without a full rewrite.
+SCHEDULE.forEach(m => {
+  m.time  = m.kickoff;
+  m.teams = `${m.home} vs ${m.away}`;
+});
