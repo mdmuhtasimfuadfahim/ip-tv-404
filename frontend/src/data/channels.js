@@ -2,20 +2,18 @@
  * Sports Channel Registry — World Cup IPTV 2026
  *
  * Stream tiers:
- *  🟢 STABLE  – public CDN, no token, CORS-open (akamai, amagi, gpcdn, frequency, xumo)
+ *  🟢 STABLE  – public CDN, no token, CORS-open (akamai, amagi, gpcdn, frequency, xumo, cloudfront)
  *  🟡 PROXY   – works only when a CORS proxy is configured (VITE_PROXY_URL)
  *  🔴 BROKEN  – removed
  *
- * needsProxy: true → requires CORS proxy to load in-browser
- *
- * Sources: iptv-org/iptv (verified), official CDNs, FAST channels
+ * needsProxy: true → requires CORS proxy / backend to load in browser
  */
 
 export const CHANNELS = [
 
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
   // 🇧🇩  BANGLADESH
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
 
   {
     id:       't-sports',
@@ -25,9 +23,10 @@ export const CHANNELS = [
     country:  'BD',
     tags:     ['cricket','football','wc2026'],
     streams: [
-      // iptv-org verified CDN (no token)
+      // iptv-org verified gpcdn (no token)
       { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8', needsProxy: false },
-      { url: 'https://tvsen7.aynaott.com/tsports-hd/index.m3u8',           needsProxy: false },
+      // User-provided alternative
+      { url: 'https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', needsProxy: false },
     ],
   },
 
@@ -37,10 +36,10 @@ export const CHANNELS = [
     logo:     'https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/GTV_Logo.png/200px-GTV_Logo.png',
     category: 'Bangladesh',
     country:  'BD',
-    tags:     ['cricket','football'],
+    tags:     ['cricket','football','wc2026'],
     streams: [
-      { url: 'https://bozztv.com/rongo/rongo-gazitv/index.m3u8',           needsProxy: false },
-      { url: 'http://tvn1.chowdhury-shaheb.com/gazitv/index.m3u8',         needsProxy: true  },
+      { url: 'https://bozztv.com/rongo/rongo-gazitv/index.m3u8', needsProxy: false },
+      { url: 'http://tvn1.chowdhury-shaheb.com/gazitv/index.m3u8', needsProxy: true },
     ],
   },
 
@@ -53,7 +52,7 @@ export const CHANNELS = [
     tags:     ['national','wc2026'],
     streams: [
       { url: 'https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/355ba051-9a60-48aa-adcf-5a6c64da8c5c/355ba051-9a60-48aa-adcf-5a6c64da8c5c_3_playlist.m3u8', needsProxy: false },
-      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/1709.m3u8', needsProxy: false },
+      { url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', needsProxy: false },
     ],
   },
 
@@ -115,13 +114,38 @@ export const CHANNELS = [
     tags:     ['entertainment'],
     streams: [
       { url: 'https://boishakhi.sonarbanglatv.com/boishakhi/boishakhitv/index.m3u8', needsProxy: false },
-      { url: 'https://bozztv.com/rongo/rongo-boishakhi/index.m3u8',                  needsProxy: false },
+      { url: 'https://bozztv.com/rongo/rongo-boishakhi/index.m3u8',                 needsProxy: false },
     ],
   },
 
-  // ══════════════════════════════════════════════════════
+  {
+    id:       'rajdhani-tv',
+    name:     'Rajdhani TV',
+    logo:     null,
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['entertainment','news'],
+    streams: [
+      { url: 'https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'bioscope-wc',
+    name:     'Bioscope WC 2026',
+    logo:     null,
+    category: 'Bangladesh',
+    country:  'BD',
+    tags:     ['football','wc2026'],
+    streams: [
+      // Bioscope Plus WC stream (Cloudflare Worker — BD streaming platform)
+      { url: 'https://streamsportixa.ajmainearafat.workers.dev/live.m3u8', needsProxy: false },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════
   // 🇵🇰  PAKISTAN
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
 
   {
     id:       'ptv-sports',
@@ -131,8 +155,8 @@ export const CHANNELS = [
     country:  'PK',
     tags:     ['cricket','wc2026'],
     streams: [
-      { url: 'https://livestream.ptv.com.pk/ptvsports/ptvsports.m3u8', needsProxy: true  },
-      { url: 'http://103.250.28.74:8000/play/a019/index.m3u8',         needsProxy: true  },
+      { url: 'https://livestream.ptv.com.pk/ptvsports/ptvsports.m3u8', needsProxy: true },
+      { url: 'http://103.250.28.74:8000/play/a019/index.m3u8',         needsProxy: true },
     ],
   },
 
@@ -156,13 +180,13 @@ export const CHANNELS = [
     country:  'PK',
     tags:     ['cricket','football','wc2026'],
     streams: [
-      { url: 'https://tvsen6.aynaott.com/asports/index.m3u8', needsProxy: false },
+      { url: 'https://geo.mawjmedia.net/asports/smil:asports.stream.smil/chunklist.m3u8', needsProxy: false },
     ],
   },
 
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
   // 🇮🇳  INDIA
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
 
   {
     id:       'dd-sports',
@@ -176,20 +200,60 @@ export const CHANNELS = [
     ],
   },
 
-  // ══════════════════════════════════════════════════════
-  // ⚽  FOOTBALL / GLOBAL
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
+  // ⚽  WORLD CUP / FOOTBALL
+  // ══════════════════════════════════════════════════════════
+
+  {
+    id:       'wc-sky-stream',
+    name:     'WC 2026 — Sky Sports',
+    logo:     null,
+    category: 'World Cup',
+    country:  'GB',
+    tags:     ['football','wc2026'],
+    streams: [
+      // CloudFront CDN — stable no-token
+      { url: 'https://d1211whpimeups.cloudfront.net/smil:rtbgo/chunklist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'wc-stream-1',
+    name:     'WC 2026 Live HD',
+    logo:     null,
+    category: 'World Cup',
+    country:  'US',
+    tags:     ['football','wc2026'],
+    streams: [
+      { url: 'https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', needsProxy: false },
+    ],
+  },
 
   {
     id:       'bein-sports',
-    name:     'beIN Sports',
+    name:     'beIN Sports (English)',
     logo:     'https://static.epg.best/qa/beINSports1.qa.png',
-    category: 'Football',
+    category: 'World Cup',
     country:  'QA',
     tags:     ['football','wc2026'],
     streams: [
-      // 🟢 Amagi FAST CDN — stable, no token
-      { url: 'https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8', needsProxy: false },
+      // Amagi FAST CDN — stable
+      { url: 'https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8',   needsProxy: false },
+      { url: 'https://amg01334-beinsportsllc-beinxtraesp-localnow-aekzc.amagi.tv/playlist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'bein-sports-1080',
+    name:     'beIN Sports 1080p',
+    logo:     'https://static.epg.best/qa/beINSports1.qa.png',
+    category: 'World Cup',
+    country:  'QA',
+    tags:     ['football','wc2026'],
+    streams: [
+      { url: 'https://andro.226503.xyz/checklist/androstreamlivebs1.m3u8', needsProxy: false },
+      { url: 'https://andro.226503.xyz/checklist/androstreamlivebs2.m3u8', needsProxy: false },
+      { url: 'https://andro.226503.xyz/checklist/androstreamlivebs3.m3u8', needsProxy: false },
     ],
   },
 
@@ -201,7 +265,6 @@ export const CHANNELS = [
     country:  'ES',
     tags:     ['football'],
     streams: [
-      // 🟢 Akamai official CDN
       { url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8', needsProxy: false },
     ],
   },
@@ -209,12 +272,11 @@ export const CHANNELS = [
   {
     id:       'bleav-football',
     name:     'Bleav Football',
-    logo:     'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/1px-PNG_transparency_demonstration_1.png',
+    logo:     null,
     category: 'Football',
     country:  'US',
     tags:     ['football'],
     streams: [
-      // 🟢 Frequency FAST CDN
       { url: 'https://linear-493.frequency.stream/dist/glewedtv/493/hls/master/playlist.m3u8', needsProxy: false },
     ],
   },
@@ -227,14 +289,40 @@ export const CHANNELS = [
     country:  'IL',
     tags:     ['football','multi'],
     streams: [
-      // 🟢 Akamai CDN
       { url: 'https://rgelive.akamaized.net/hls/live/2043095/live3/playlist.m3u8', needsProxy: false },
     ],
   },
 
-  // ══════════════════════════════════════════════════════
+  {
+    id:       'caze-tv',
+    name:     'Cazé TV (Brazil)',
+    logo:     null,
+    category: 'Football',
+    country:  'BR',
+    tags:     ['football','wc2026'],
+    streams: [
+      // Amagi/CloudFront — stable, WC 2026 coverage
+      { url: 'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8',    needsProxy: false },
+      { url: 'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', needsProxy: false },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════
   // 🏏  CRICKET
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
+
+  {
+    id:       'cricket-gold',
+    name:     'Cricket Gold',
+    logo:     null,
+    category: 'Cricket',
+    country:  'IN',
+    tags:     ['cricket'],
+    streams: [
+      // CloudFront CDN — stable from DOCX
+      { url: 'https://d1nj4u39ja4cn0.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/FLS-MuxIP-CricketGold/418.m3u8', needsProxy: false },
+    ],
+  },
 
   {
     id:       'willow-tv',
@@ -248,21 +336,9 @@ export const CHANNELS = [
     ],
   },
 
-  {
-    id:       'cricket-gold',
-    name:     'Cricket Gold',
-    logo:     null,
-    category: 'Cricket',
-    country:  'IN',
-    tags:     ['cricket'],
-    streams: [
-      { url: 'https://tvsen6.aynaott.com/CricketGold/index.m3u8', needsProxy: false },
-    ],
-  },
-
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
   // 📡  MULTI-SPORT — STABLE FAST CHANNELS
-  // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
 
   {
     id:       'nbc-sports',
@@ -272,8 +348,72 @@ export const CHANNELS = [
     country:  'US',
     tags:     ['multi','wc2026'],
     streams: [
-      // 🟢 Xumo/NBC CDN
       { url: 'https://xumo-xumoent-vc-122-sjv70.fast.nbcuni.com/live/master.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'fox-ny',
+    name:     'FOX Sports (WNYW)',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'US',
+    tags:     ['multi','wc2026'],
+    streams: [
+      // Amagi FAST CDN
+      { url: 'https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-wnyw-lgus/playlist.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'tvri-sport',
+    name:     'TVRI Sport HD (Indonesia)',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'ID',
+    tags:     ['multi','wc2026'],
+    streams: [
+      // Official Indonesian state broadcaster CDN
+      { url: 'https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD-avc1_1500000=10003-mp4a_96000=20002.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'red-bull-tv',
+    name:     'Red Bull TV',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'AT',
+    tags:     ['motorsport','extreme'],
+    streams: [
+      // Akamai CDN — stable
+      { url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'dazn-combat',
+    name:     'DAZN Combat',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'US',
+    tags:     ['combat','boxing'],
+    streams: [
+      // Amagi FAST CDN
+      { url: 'https://dazn-combat-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-dazn-combat-rakuten/CDN/master.m3u8', needsProxy: false },
+    ],
+  },
+
+  {
+    id:       'fight-network',
+    name:     'FIGHT NETWORK',
+    logo:     null,
+    category: 'Multi-Sport',
+    country:  'CA',
+    tags:     ['combat','mma'],
+    streams: [
+      // Amagi playout — stable
+      { url: 'https://amg00966-amg00966c10-amgplt0201.playout.now3.amagi.tv/playlist/amg00966-amg00966c10-amgplt0201/playlist.m3u8', needsProxy: false },
     ],
   },
 
@@ -285,7 +425,6 @@ export const CHANNELS = [
     country:  'US',
     tags:     ['multi'],
     streams: [
-      // 🟢 Amagi FAST CDN
       { url: 'https://mainstreammedia-worldoffreesportsintl-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-mainstreammediafreesportsintl-rakuten/CDN/master.m3u8', needsProxy: false },
     ],
   },
@@ -298,7 +437,6 @@ export const CHANNELS = [
     country:  'US',
     tags:     ['motorsport'],
     streams: [
-      // 🟢 Frequency/Stirr FAST CDN
       { url: 'https://linear-599.frequency.stream/dist/stirr/599/hls/master/playlist.m3u8', needsProxy: false },
     ],
   },
@@ -311,7 +449,6 @@ export const CHANNELS = [
     country:  'DE',
     tags:     ['multi'],
     streams: [
-      // 🟢 iptv-playoutcenter stable
       { url: 'https://mts1.iptv-playoutcenter.de/mts/mts-web/playlist.m3u8', needsProxy: false },
     ],
   },
@@ -324,7 +461,6 @@ export const CHANNELS = [
     country:  'US',
     tags:     ['multi'],
     streams: [
-      // 🟢 CloudFront CDN
       { url: 'https://d4ddgdmj1cvnm.cloudfront.net/scheduler/scheduleMaster/409.m3u8', needsProxy: false },
     ],
   },
@@ -337,7 +473,6 @@ export const CHANNELS = [
     country:  'KW',
     tags:     ['multi'],
     streams: [
-      // 🟢 Mangomolo CDN
       { url: 'https://kwtsplta.cdn.mangomolo.com/spl/smil:spl.stream.smil/chunklist.m3u8', needsProxy: false },
     ],
   },
@@ -350,7 +485,6 @@ export const CHANNELS = [
     country:  'OM',
     tags:     ['multi'],
     streams: [
-      // 🟢 Mgmlcdn CDN
       { url: 'https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist.m3u8', needsProxy: false },
     ],
   },
@@ -363,7 +497,6 @@ export const CHANNELS = [
     country:  'BH',
     tags:     ['multi'],
     streams: [
-      // 🟢 StreamLock CDN
       { url: 'https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8', needsProxy: false },
     ],
   },
@@ -376,7 +509,6 @@ export const CHANNELS = [
     country:  'GE',
     tags:     ['multi'],
     streams: [
-      // 🟢 GPB CDN
       { url: 'https://tv.cdn.xsg.ge/gpb-2tv/index.m3u8', needsProxy: false },
     ],
   },
@@ -393,30 +525,19 @@ export const CHANNELS = [
     ],
   },
 
-  {
-    id:       'marquee-sports',
-    name:     'Marquee Sports Network',
-    logo:     null,
-    category: 'Multi-Sport',
-    country:  'US',
-    tags:     ['baseball','multi'],
-    streams: [
-      { url: 'https://tvsen6.aynaott.com/MarqueeSportsNetwork/index.m3u8', needsProxy: false },
-    ],
-  },
-
 ];
 
 // ── Category tabs ────────────────────────────────────────────────
 export const CATEGORIES = [
-  { id: 'All',        label: '🌐 All',         emoji: '🌐' },
-  { id: 'Bangladesh', label: '🇧🇩 Bangladesh', emoji: '🇧🇩' },
-  { id: 'Pakistan',   label: '🇵🇰 Pakistan',   emoji: '🇵🇰' },
-  { id: 'India',      label: '🇮🇳 India',       emoji: '🇮🇳' },
-  { id: 'Football',   label: '⚽ Football',     emoji: '⚽' },
-  { id: 'Cricket',    label: '🏏 Cricket',      emoji: '🏏' },
-  { id: 'Multi-Sport',label: '📡 Multi-Sport',  emoji: '📡' },
-  { id: 'Motorsport', label: '🏎️ Motorsport',   emoji: '🏎️' },
+  { id: 'All',        label: '🌐 All',          emoji: '🌐' },
+  { id: 'World Cup',  label: '🏆 World Cup',     emoji: '🏆' },
+  { id: 'Bangladesh', label: '🇧🇩 Bangladesh',  emoji: '🇧🇩' },
+  { id: 'Pakistan',   label: '🇵🇰 Pakistan',    emoji: '🇵🇰' },
+  { id: 'India',      label: '🇮🇳 India',        emoji: '🇮🇳' },
+  { id: 'Football',   label: '⚽ Football',      emoji: '⚽' },
+  { id: 'Cricket',    label: '🏏 Cricket',       emoji: '🏏' },
+  { id: 'Multi-Sport',label: '📡 Multi-Sport',   emoji: '📡' },
+  { id: 'Motorsport', label: '🏎️ Motorsport',    emoji: '🏎️' },
 ];
 
 // Country flag emoji helper

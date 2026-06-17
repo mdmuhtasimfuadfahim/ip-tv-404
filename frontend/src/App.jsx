@@ -36,16 +36,39 @@ function ShareButton() {
 }
 
 export default function App() {
-  const [tab,     setTab]     = useState('watch');
-  const [channel, setChannel] = useState(null);
+  const [tab,         setTab]         = useState('watch');
+  const [channel,     setChannel]     = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleSelect = ch => { setChannel(ch); setTab('watch'); };
+  const handleSelect = ch => {
+    setChannel(ch);
+    setTab('watch');
+    setSidebarOpen(false); // close drawer on mobile after selecting
+  };
 
   return (
     <div className="app">
 
-      {/* ── Top bar ─────────────────────────────────────── */}
+      {/* Mobile overlay — close sidebar when tapping outside */}
+      {sidebarOpen && (
+        <div
+          className="mob-overlay"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ── Top bar ─────────────────────────────────────────── */}
       <header className="topbar">
+        {/* Hamburger — only visible on mobile */}
+        <button
+          className="mob-hamburger"
+          onClick={() => setSidebarOpen(p => !p)}
+          aria-label="Toggle channel list"
+        >
+          <span /><span /><span />
+        </button>
+
         <div className="topbar-brand">
           <span className="topbar-ball">⚽</span>
           <div className="topbar-title-wrap">
@@ -88,9 +111,14 @@ export default function App() {
         </div>
       </header>
 
-      {/* ── Body ─────────────────────────────────────────── */}
+      {/* ── Body ─────────────────────────────────────────────── */}
       <div className="app-body">
-        <Sidebar active={channel} onSelect={handleSelect} />
+        <Sidebar
+          active={channel}
+          onSelect={handleSelect}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
         <main className="app-main">
           {tab === 'watch' ? (
@@ -133,14 +161,20 @@ export default function App() {
                     <span>🇧🇩 BTV</span>
                     <span>🇵🇰 PTV Sports</span>
                     <span>🇮🇳 DD Sports</span>
-                    <span>🌍 beIN Sports</span>
+                    <span>🏆 beIN Sports</span>
                     <span>📡 NBC Sports</span>
-                    <span>🌐 +28 more</span>
+                    <span>🌐 +25 more</span>
                   </div>
-                  <button
-                    className="hero-schedule-btn"
-                    onClick={() => setTab('schedule')}
-                  >📅 View Match Schedule + Timezones →</button>
+                  <div className="hero-actions">
+                    <button
+                      className="hero-schedule-btn"
+                      onClick={() => setTab('schedule')}
+                    >📅 View Match Schedule + Timezones →</button>
+                    <button
+                      className="hero-channels-btn"
+                      onClick={() => setSidebarOpen(true)}
+                    >📺 Browse Channels →</button>
+                  </div>
                 </div>
               </div>
             )

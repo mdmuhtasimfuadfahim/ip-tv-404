@@ -430,21 +430,153 @@ a{text-decoration:none;color:inherit}
 .epg-live-soon{font-size:11px;font-weight:700;color:var(--gold);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);padding:2px 8px;border-radius:99px}
 
 /* ══════════════════════════════════════════════
-   MOBILE (≤ 680px)
+   HAMBURGER BUTTON (hidden on desktop)
    ══════════════════════════════════════════════ */
-@media(max-width:680px){
-  :root{--sb:100%}
-  .app-body{flex-direction:column}
-  .sidebar{width:100%;max-height:190px;border-right:none;border-bottom:1px solid var(--border)}
-  .sb-cats{display:none}
-  .player-wrap{max-height:56vw}
-  .topbar-flags,.topbar-year,.cib-keys{display:none}
-  .epg-top{padding:12px 14px}
-  .epg-body{padding:10px 14px}
-  .epg-controls{padding:8px 14px}
-  .tz-wrap{margin-left:0}
-  .epg-countdown{display:none}
-  .ch-info-bar{flex-direction:column;align-items:flex-start}
-  .watch-hero{padding:20px}
+.mob-hamburger{
+  display:none;
+  flex-direction:column;justify-content:center;align-items:center;
+  gap:4px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:7px 9px;cursor:pointer;flex-shrink:0;
+}
+.mob-hamburger span{
+  display:block;width:16px;height:2px;
+  background:var(--t2);border-radius:99px;transition:all .2s;
+}
+.mob-hamburger:hover span{background:var(--t1)}
+
+/* Mobile overlay backdrop */
+.mob-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.65);
+  z-index:199;
+  animation:fade-in .2s ease;
+}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+
+/* Sidebar close button (mobile only) */
+.sb-close-btn{
+  display:none;
+  position:absolute;top:10px;right:10px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--t2);font-size:14px;
+  width:28px;height:28px;border-radius:50%;
+  align-items:center;justify-content:center;cursor:pointer;
+  z-index:10;
+}
+.sb-close-btn:hover{background:var(--bg4);color:var(--t1)}
+
+/* Hero actions row */
+.hero-actions{display:flex;flex-direction:column;gap:10px;align-items:center}
+.hero-channels-btn{
+  background:var(--bg3);border:1px solid var(--border);color:var(--t2);
+  font-size:14px;font-weight:600;padding:10px 22px;
+  border-radius:var(--r);transition:all .15s;
+}
+.hero-channels-btn:hover{background:var(--bg4);color:var(--t1);border-color:var(--t4)}
+
+/* ══════════════════════════════════════════════
+   TABLET (≤ 900px) — compact topbar
+   ══════════════════════════════════════════════ */
+@media(max-width:900px){
+  .topbar-flags{display:none}
+  .cib-keys{display:none}
+  .share-btn.tw,.share-btn.wa{display:none}
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE (≤ 768px) — drawer sidebar
+   ══════════════════════════════════════════════ */
+@media(max-width:768px){
+  /* Allow body to scroll on mobile for EPG */
+  html,body,#root{overflow:auto}
+  .app{min-height:100vh;height:auto}
+  .app-body{flex-direction:column;overflow:visible}
+  .app-main{overflow:visible;min-height:0}
+
+  /* Show hamburger */
+  .mob-hamburger{display:flex}
+
+  /* Sidebar becomes fixed drawer from left */
+  .sidebar{
+    position:fixed;
+    top:var(--topbar);
+    left:0;
+    bottom:0;
+    width:min(320px, 90vw);
+    z-index:200;
+    transform:translateX(-100%);
+    transition:transform .25s cubic-bezier(.4,0,.2,1);
+    border-right:1px solid var(--border);
+    overflow-y:auto;
+    /* shadow when open */
+    box-shadow:none;
+  }
+  .sidebar.open{
+    transform:translateX(0);
+    box-shadow:8px 0 40px rgba(0,0,0,.7);
+  }
+
+  /* Show close button inside drawer */
+  .sb-close-btn{display:flex}
+  .sb-search{padding-right:44px} /* make room for close btn */
+
+  /* Topbar tweaks */
   .topbar-now{display:none}
+  .topbar-year{display:none}
+
+  /* Player: full width, 16:9 */
+  .player-wrap{
+    max-height:none;
+    aspect-ratio:16/9;
+    width:100%;
+  }
+  .watch-wrap{height:auto}
+
+  /* Channel info bar stack vertically */
+  .ch-info-bar{flex-direction:column;align-items:flex-start;gap:6px}
+  .cib-r{width:100%}
+
+  /* Watch hero */
+  .watch-hero{padding:20px 16px;align-items:flex-start}
+  .watch-hero-inner{padding:24px 18px;max-width:100%}
+  .hero-ball{font-size:48px}
+  .watch-hero-inner h2{font-size:20px}
+
+  /* EPG */
+  .epg{height:auto;overflow:visible}
+  .epg-top{padding:14px 14px 10px;flex-direction:column;gap:8px}
+  .epg-countdown{display:none}
+  .epg-controls{padding:8px 14px;flex-wrap:wrap}
+  .tz-wrap{margin-left:0;width:100%}
+  .tz-btn{width:100%;justify-content:space-between}
+  .epg-search{max-width:100%;width:100%}
+  .epg-body{padding:10px 14px;overflow:visible}
+  .epg-match{
+    grid-template-columns:70px 1fr auto;
+    gap:2px 8px;
+    padding:10px 10px;
+  }
+  .epg-match-teams{font-size:13px}
+  .epg-time{font-size:16px}
+  .epg-match-meta{font-size:10px;gap:6px}
+
+  /* Topbar more compact */
+  .topbar{padding:0 10px;gap:8px}
+  .topbar-title{font-size:14px}
+  .topbar-ball{font-size:18px}
+  .topbar-tab{padding:5px 10px;font-size:12px}
+  .share-group{gap:2px}
+  .share-btn{padding:5px 8px;font-size:11px}
+  .topbar-gh{display:none}
+}
+
+/* ══════════════════════════════════════════════
+   VERY SMALL (≤ 400px)
+   ══════════════════════════════════════════════ */
+@media(max-width:400px){
+  .topbar-title-wrap{display:none}
+  .share-btn.primary{padding:5px 8px}
+  .epg-match{grid-template-columns:60px 1fr auto;padding:8px 8px}
+  .epg-match-teams{font-size:12px}
 }

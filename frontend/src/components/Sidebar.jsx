@@ -5,7 +5,7 @@ const FAV_KEY = 'iptv_favorites_v2';
 function getFavs()  { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; } }
 function saveFavs(f){ localStorage.setItem(FAV_KEY, JSON.stringify(f)); }
 
-export default function Sidebar({ active, onSelect }) {
+export default function Sidebar({ active, onSelect, isOpen, onClose }) {
   const [search,   setSearch]   = useState('');
   const [category, setCategory] = useState('All');
   const [favOnly,  setFavOnly]  = useState(false);
@@ -33,7 +33,10 @@ export default function Sidebar({ active, onSelect }) {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${isOpen ? ' open' : ''}`}>
+      {/* Mobile close button */}
+      <button className="sb-close-btn" onClick={onClose} aria-label="Close sidebar">✕</button>
+
       {/* Search */}
       <div className="sb-search">
         <span className="sb-search-icon">⌕</span>
@@ -76,7 +79,7 @@ export default function Sidebar({ active, onSelect }) {
         )}
 
         {filtered.map(ch => {
-          const isActive = active?.id === ch.id;
+          const isActive   = active?.id === ch.id;
           const needsProxy = ch.streams.every(s => s.needsProxy);
 
           return (
